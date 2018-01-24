@@ -158,7 +158,6 @@
     hasAnyMajorDiagonalConflicts: function() {
       var boardSize = this.get('n');
       for (var i = (1 + boardSize * -1); i < boardSize; i++) {
-        console.log(i);
         if (this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
@@ -192,7 +191,6 @@
     hasAnyMinorDiagonalConflicts: function() {
       var boardSize = this.get('n');
       for (var i = 0; i <= (boardSize - 1) * 2; i++) {
-        console.log(i);
         if (this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }
