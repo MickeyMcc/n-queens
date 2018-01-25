@@ -46,52 +46,60 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined;
-  var board = new Board({n: n});
-  var potentialBoards = [];
-  potentialBoards.push(board);
   
-  var makeDeepCopy = function(currentBoard) {
-    var currentBoardArr = currentBoard.rows();
-    var cBoardString = JSON.stringify(currentBoardArr);
-    var newBoardArr = JSON.parse(cBoardString);
-    var newBoard = new Board(newBoardArr);
-    return newBoard;
+  var solution = []; //fixme
+  var board = new Board({n: n});
+  
+  var makeColumnObj = function(n) {
+    obj = [];
+    for (i = 0; i < n; i++) {
+      obj[i] = true;
+    }
+    return obj;
   };
   
-  var tryAllRowOptions = function (potentialBoards) {
-    var newBoards = [];
-    for (var boardNum = 0; boardNum < potentialBoards.length; boardNum++) {
-      var currentBoard = potentialBoards[boardNum];
-      for (var c = 0; c < n; c++) {
-        currentBoard.togglePiece(row, c);
-        if (!currentBoard.hasAnyQueensConflicts()) {
-          var newBoard = makeDeepCopy(currentBoard);
-          newBoards.push(newBoard);
-          currentBoard.togglePiece(row, c);
+  var allColumns = makeColumnObj(n);
+  
+  var makeCopy = function(currentBoard) {
+    return currentBoard.rows().map(function (row) {
+      return row.slice();
+    });
+  };
+
+  var addAPiece = function (board, row, emptyCols) {
+    for (var col in emptyCols) {
+      board.togglePiece(row, col);
+      if (!board.hasAnyQueensConflicts()) {
+        if (row !== n - 1) {
+          delete emptyCols[col];
+          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
+          board.togglePiece(row, col);
+          emptyCols[col] = true;
         } else {
-          currentBoard.togglePiece(row, c);
+          console.log('found a solution');
+          solution = board.rows();
+          return;
         }
+      } else {
+        board.togglePiece(row, col);
       }
     }
-    return newBoards;
+    return;   
   };
   
-  for (var row = 0; row < n; row ++) {
-    potentialBoards = tryAllRowOptions(potentialBoards);
+  if (solution.length === 0) {
+    solution = (new Board({n:n})).rows();
   }
-  if (potentialBoards[0]) {
-    solution = potentialBoards[0].rows();
-  } else {
-    solution = board.rows();
-  }
+  
+  addAPiece(board, 0, allColumns);
+
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
-
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+
 window.countNQueensSolutions = function(n) {
-  if (n === 1) {
+  if (n === 1 || n === 0) {
     return 1;
   } else if (n === 2 || n === 3) {
     return 0;
@@ -99,42 +107,45 @@ window.countNQueensSolutions = function(n) {
   
   var solutionCount = 0; //fixme
   var board = new Board({n: n});
-  var potentialBoards = [];
-  potentialBoards.push(board);
   
-  var makeDeepCopy = function(currentBoard) {
-    var currentBoardArr = currentBoard.rows();
-    var cBoardString = JSON.stringify(currentBoardArr);
-    var newBoardArr = JSON.parse(cBoardString);
-    var newBoard = new Board(newBoardArr);
-    return newBoard;
+  var makeColumnObj = function(n) {
+    obj = [];
+    for (i = 0; i < n; i++) {
+      obj[i] = true;
+    }
+    return obj;
   };
   
+  var allColumns = makeColumnObj(n);
   
-  var tryAllRowOptions = function (potentialBoards) {
-    var newBoards = [];
-    for (var currentBoard of potentialBoards) {
-      for (var col = 0; col < n; col++) {
-        currentBoard.togglePiece(row, col);
-        if (!currentBoard.hasAnyQueensConflicts()) {
-          var newBoard = makeDeepCopy(currentBoard);
-          newBoards.push(newBoard);
-          currentBoard.togglePiece(row, col);
+  var makeCopy = function(currentBoard) {
+    return currentBoard.rows().map(function (row) {
+      return row.slice();
+    });
+  };
+
+  var addAPiece = function (board, row, emptyCols) {
+    for (var col in emptyCols) {
+      board.togglePiece(row, col);
+      if (!board.hasAnyQueensConflicts()) {
+        if (row !== n - 1) {
+          delete emptyCols[col];
+          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
+          board.togglePiece(row, col);
+          emptyCols[col] = true;
         } else {
-          currentBoard.togglePiece(row, col);
+          solutionCount++;
+          return;
         }
+      } else {
+        board.togglePiece(row, col);
       }
     }
-    return newBoards;
+    return;   
   };
   
-  for (var row = 0; row < n; row ++) {
-    potentialBoards = tryAllRowOptions(potentialBoards);
-  }
-  
-  //for (var boardNum = 0; boardNum < potentialBoards.length; boardNum++) {
-  
-  solutionCount = potentialBoards.length;
+  addAPiece(board, 0, allColumns);
+  //compareCopies()
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
