@@ -140,35 +140,28 @@ window.countNQueensSolutions = function(n) {
     return 0;
   }
   
-  var solutionCount = 0; //fixme
-  var board = new Board({n: n});
+  let solutionCount = 0;
+  const board = new Board({n: n});
   
-  var makeColumnObj = function(n) {
+  const makeColumnObj = n => {
     obj = [];
     for (i = 0; i < n; i++) {
       obj[i] = true;
     }
     return obj;
   };
-  
-  var allColumns = makeColumnObj(n);
-  
-  var makeCopy = function(currentBoard) {
-    return currentBoard.rows().map(function (row) {
-      return row.slice();
-    });
-  };
 
-  var addAPiece = function (board, row, emptyCols) {
+  var addAPiece = (board, row, emptyCols) => {
     for (var col in emptyCols) {
       board.togglePiece(row, col);
       if (!board.hasAnyQueensConflicts()) {
         if (row !== n - 1) {
           delete emptyCols[col];
-          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
+          addAPiece(board, row + 1, emptyCols);
           board.togglePiece(row, col);
           emptyCols[col] = true;
         } else {
+          board.togglePiece(row, col);
           solutionCount++;
           return;
         }
@@ -179,7 +172,7 @@ window.countNQueensSolutions = function(n) {
     return;   
   };
   
-  addAPiece(board, 0, allColumns);
+  addAPiece(board, 0, makeColumnObj(n));
   //compareCopies()
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
