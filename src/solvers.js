@@ -49,6 +49,7 @@ window.findNQueensSolution = function(n) {
   
   var solution = []; //fixme
   var board = new Board({n: n});
+  var foundSolution = false;
   
   var makeColumnObj = function(n) {
     obj = [];
@@ -58,26 +59,30 @@ window.findNQueensSolution = function(n) {
     return obj;
   };
   
-  var allColumns = makeColumnObj(n);
-  
   var makeCopy = function(currentBoard) {
     return currentBoard.rows().map(function (row) {
       return row.slice();
     });
   };
 
-  var addAPiece = function (board, row, emptyCols) {
+  const addAPiece = (board, row, emptyCols) => {
     for (var col in emptyCols) {
+      if (foundSolution) {
+        break;
+      }
       board.togglePiece(row, col);
       if (!board.hasAnyQueensConflicts()) {
         if (row !== n - 1) {
           delete emptyCols[col];
-          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
-          board.togglePiece(row, col);
-          emptyCols[col] = true;
+          addAPiece(board, row + 1, emptyCols);
+          if (!foundSolution) {
+            board.togglePiece(row, col);
+            emptyCols[col] = true;
+          }
         } else {
           solution = board.rows();
-          return;
+          foundSolution = true;
+          break;
         }
       } else {
         board.togglePiece(row, col);
@@ -86,44 +91,27 @@ window.findNQueensSolution = function(n) {
     return;   
   };
   
-  if (solution.length === 0) {
-    solution = (new Board({n:n})).rows();
-  }
-  
-  addAPiece(board, 0, allColumns);
+  addAPiece(board, 0, makeColumnObj(n));
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  return solution.length === 0 ? (new Board({n: n})).rows() : solution;
 };
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 
-window.countNQueensSolutions = function(n) {
-  if (n === 1 || n === 0) {
-    return 1;
-  } else if (n === 2 || n === 3) {
-    return 0;
-  }
+window.countNQueensSolutions = n => {
+
+  let solutionCount = 0;
+  const board = new Board({n: n});
   
-  var solutionCount = 0; //fixme
-  var board = new Board({n: n});
-  
-  var makeColumnObj = function(n) {
+  const makeColumnObj = n => {
     obj = [];
     for (i = 0; i < n; i++) {
       obj[i] = true;
     }
     return obj;
   };
-  
-  var allColumns = makeColumnObj(n);
-  
-  var makeCopy = function(currentBoard) {
-    return currentBoard.rows().map(function (row) {
-      return row.slice();
-    });
-  };
 
-  var addAPiece = function (board, row, emptyCols) {
+  const addAPiece = (board, row, emptyCols) => {
     for (var col in emptyCols) {
       board.togglePiece(row, col);
       if (!board.hasAnyQueensConflicts()) {
@@ -144,9 +132,8 @@ window.countNQueensSolutions = function(n) {
     return;   
   };
   
-  addAPiece(board, 0, allColumns);
-  //compareCopies()
+  addAPiece(board, 0, makeColumnObj(n));
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  return n === 0 ? 1 : solutionCount;
 };
