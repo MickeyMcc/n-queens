@@ -76,7 +76,6 @@ window.findNQueensSolution = function(n) {
           board.togglePiece(row, col);
           emptyCols[col] = true;
         } else {
-          console.log('found a solution');
           solution = board.rows();
           return;
         }
@@ -130,10 +129,11 @@ window.countNQueensSolutions = function(n) {
       if (!board.hasAnyQueensConflicts()) {
         if (row !== n - 1) {
           delete emptyCols[col];
-          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
+          addAPiece(board, row + 1, emptyCols);
           board.togglePiece(row, col);
           emptyCols[col] = true;
         } else {
+          board.togglePiece(row, col);
           solutionCount++;
           return;
         }
