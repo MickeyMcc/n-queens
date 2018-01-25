@@ -59,11 +59,6 @@ window.findNQueensSolution = function(n) {
     return obj;
   };
   
-  var makeCopy = function(currentBoard) {
-    return currentBoard.rows().map(function (row) {
-      return row.slice();
-    });
-  };
 
   const addAPiece = (board, row, emptyCols) => {
     for (var col in emptyCols) {
@@ -136,4 +131,57 @@ window.countNQueensSolutions = n => {
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return n === 0 ? 1 : solutionCount;
+};
+
+window.countNQueensSolutions = function(n) {
+  if (n === 1 || n === 0) {
+    return 1;
+  } else if (n === 2 || n === 3) {
+    return 0;
+  }
+  
+  var solutionCount = 0; //fixme
+  var board = new Board({n: n});
+  
+  var makeColumnObj = function(n) {
+    obj = [];
+    for (i = 0; i < n; i++) {
+      obj[i] = true;
+    }
+    return obj;
+  };
+  
+  var allColumns = makeColumnObj(n);
+  
+  var makeCopy = function(currentBoard) {
+    return currentBoard.rows().map(function (row) {
+      return row.slice();
+    });
+  };
+
+  var addAPiece = function (board, row, emptyCols) {
+    for (var col in emptyCols) {
+      board.togglePiece(row, col);
+      if (!board.hasAnyQueensConflicts()) {
+        if (row !== n - 1) {
+          delete emptyCols[col];
+          addAPiece(new Board(makeCopy(board)), row + 1, emptyCols);
+          board.togglePiece(row, col);
+          emptyCols[col] = true;
+        } else {
+          solutionCount++;
+          return;
+        }
+      } else {
+        board.togglePiece(row, col);
+      }
+    }
+    return;   
+  };
+  
+  addAPiece(board, 0, allColumns);
+  //compareCopies()
+
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
 };
