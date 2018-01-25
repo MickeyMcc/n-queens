@@ -15,21 +15,21 @@
 
 
 
-window.findNRooksSolution = function(n) {
-  var board = new Board({n: n});
-  for (var i = 0; i < n; i++) {
+window.findNRooksSolution = n => {
+  const board = new Board({n: n});
+  for (let i = 0; i < n; i++) {
     board.togglePiece(i, i);
   }
-  var solution = board.rows();
+  const solution = board.rows();
 
   //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
-window.countNRooksSolutions = function(n) {
-  var factorial = function (n) {
-    var solutions = 1;
+window.countNRooksSolutions = n => {
+  const factorial = function (n) {
+    let solutions = 1;
     while (n > 0) {
       solutions *= n;
       n--;
@@ -45,13 +45,13 @@ window.countNRooksSolutions = function(n) {
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
-window.findNQueensSolution = function(n) {
+window.findNQueensSolution = n => {
   
-  var solution = []; //fixme
-  var board = new Board({n: n});
-  var foundSolution = false;
+  let solution = []; //fixme
+  const board = new Board({n: n});
+  let foundSolution = false;
   
-  var makeColumnObj = function(n) {
+  const makeColumnObj = n => {
     obj = [];
     for (i = 0; i < n; i++) {
       obj[i] = true;
@@ -61,7 +61,7 @@ window.findNQueensSolution = function(n) {
   
 
   const addAPiece = (board, row, emptyCols) => {
-    for (var col in emptyCols) {
+    for (let col in emptyCols) {
       if (foundSolution) {
         break;
       }
@@ -100,14 +100,14 @@ window.countNQueensSolutions = n => {
   
   const makeColumnObj = n => {
     obj = [];
-    for (i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       obj[i] = true;
     }
     return obj;
   };
 
   const addAPiece = (board, row, emptyCols) => {
-    for (var col in emptyCols) {
+    for (let col in emptyCols) {
       board.togglePiece(row, col);
       if (!board.hasAnyQueensConflicts()) {
         if (row !== n - 1) {
@@ -133,13 +133,8 @@ window.countNQueensSolutions = n => {
   return n === 0 ? 1 : solutionCount;
 };
 
-window.countNQueensSolutions = function(n) {
-  if (n === 1 || n === 0) {
-    return 1;
-  } else if (n === 2 || n === 3) {
-    return 0;
-  }
-  
+window.countNQueensSolutions = n => {
+
   let solutionCount = 0;
   const board = new Board({n: n});
   
@@ -151,8 +146,8 @@ window.countNQueensSolutions = function(n) {
     return obj;
   };
 
-  var addAPiece = (board, row, emptyCols) => {
-    for (var col in emptyCols) {
+  const addAPiece = (board, row, emptyCols) => {
+    for (let col in emptyCols) {
       board.togglePiece(row, col);
       if (!board.hasAnyQueensConflicts()) {
         if (row !== n - 1) {
@@ -173,8 +168,7 @@ window.countNQueensSolutions = function(n) {
   };
   
   addAPiece(board, 0, makeColumnObj(n));
-  //compareCopies()
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  return n === 0 ? 1 : solutionCount;
 };

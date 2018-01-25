@@ -43,14 +43,16 @@
 
     hasAnyQueenConflictsOn: function(rowIndex, colIndex) {
       return (
-        //this.hasRowConflictAt(rowIndex) ||
-        //this.hasColConflictAt(colIndex) ||
+        this.hasRowConflictAt(rowIndex) ||  
+        this.hasColConflictAt(colIndex) ||  
         this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)) ||
         this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
       );
     },
 
     hasAnyQueensConflicts: function() {
+      // hasAnyRooksConflicts was removed from here because current solution counting method
+      // never produces a row or column conflict, so checking is a waste of time
       return this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
     },
 
@@ -84,11 +86,7 @@
       for (var i = 0; i < currentRow.length; i++) {
         pieces += currentRow[i];
       }
-      if (pieces > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return pieces > 1 ? true : false;
     },
     //time complexity: n
 
@@ -115,11 +113,7 @@
       for (var i = 0; i < boardSize; i++) {
         pieces += this.get(i)[colIndex];
       }
-      if (pieces > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return pieces > 1 ? true : false;
     },
     //time complexity: n
 
@@ -150,11 +144,7 @@
           pieces += this.get(i)[colIndex];
         }
       }
-      if (pieces > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return pieces > 1 ? true : false;
     },
     //time complexity: n
 
@@ -166,7 +156,7 @@
           return true;
         }
       }
-      return false; // fixme
+      return false;
     },
     //time complexity: n^2
 
@@ -184,11 +174,7 @@
           pieces += this.get(i)[colIndex];
         }
       }
-      if (pieces > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return pieces > 1 ? true : false;
     },
     //time complexity: n
 
@@ -200,7 +186,7 @@
           return true;
         }
       }
-      return false; // fixme
+      return false;
     },
     //time complexity: n^2
 
